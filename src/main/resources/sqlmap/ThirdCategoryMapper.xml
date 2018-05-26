@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auditing.work.dal.daointerface.ThirdCategoryMapper">
+    <resultMap id="ThirdCategoryMap" type="com.auditing.work.dal.dataobject.ThirdCategory">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="second_id" jdbcType="INTEGER" property="second_id"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, second_id, level, name, remarks
+    </sql>
+    <select id="selectAllThirdCategoryBySecond" resultMap="ThirdCategoryMap">
+        select * from ThirdCategory
+         	<where> 
+				    <if test="second_id != null">
+				        AND second_id=#{second_id, jdbcType=INTEGER} 
+				    </if> 
+				    <if test="key != null and key != ''">
+				        OR level LIKE '%${key}%'   OR name LIKE '%${key}%'
+				    </if>
+				  
+		  </where>
+       
+    </select>
+    <select id="selectByLevel" resultMap="ThirdCategoryMap" parameterType="java.lang.String">
+        select * from ThirdCategory where level=#{level, jdbcType=VARCHAR}
+    </select>
+    <insert id="insert" parameterType="com.auditing.work.dal.dataobject.ThirdCategory">
+        insert into ThirdCategory (id, second_id, level, name, remarks)
+        values (#{id,jdbcType=INTEGER}, #{second_id,jdbcType=INTEGER}, #{level,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},
+        #{remarks,jdbcType=VARCHAR}
+        )
+    </insert>
+</mapper>

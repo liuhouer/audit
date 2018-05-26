@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auditing.work.dal.daointerface.ReviewPointActionLogMapper">
+
+
+
+    
+        <select id="queryNoReadByUserId"  resultType="com.auditing.work.modle.vo.ReviewPointActionLogView">
+        		SELECT
+						review_point_action_log.id,
+						review_point_action_log.review_point_id as reviewPointId,
+						review_point_action_log.user_id as userId,
+						review_point_action_log.action_date as actionDate,
+						actinUser.user_name as userName,
+						ReviewPoint.score as reviewPointScore,
+						ReviewPoint.detail as reviewPointContent,
+						ReviewPoint.`status` as reviewPointStatus,
+						FourthCategory.`name`as level4Name
+				FROM
+					review_point_action_log
+					Left Join ReviewPoint on review_point_action_log.review_point_id = ReviewPoint.id
+					Left Join users as actinUser on review_point_action_log.user_id = actinUser.id
+					Left Join FourthCategory on ReviewPoint.fourth_id = FourthCategory.id
+					Left Join review_point_message on review_point_action_log.id = review_point_message.review_point_action_log_id
+		
+		  <where> 
+				    <if test="true">
+				        AND review_point_message.is_readed = 0
+				    </if> 
+				    <if test="userId != null ">
+				       AND  review_point_message.user_id=#{userId, jdbcType=INTEGER} 
+				    </if>
+		  </where>
+		
+		
+		ORDER BY review_point_action_log.action_date DESC
+
+               
+    </select>
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+       default-lazy-init="false">
+
+    <mvc:annotation-driven />
+    <mvc:default-servlet-handler/>
+    <context:annotation-config />
+    <!-- 把标记了@Controller注解的类转换为bean -->
+    <context:component-scan base-package="com.auditing.work.controller"/>
+    <!-- 启动Spring MVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean
+            class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+
+   <!-- <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> -->
+        <!-- 设置上传文件的最大尺寸为1MB -->
+       <!-- <property name="maxUploadSize">
+            <value>1048576</value>
+        </property>
+    </bean> -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
+          p:maxUploadSize="5120000" p:maxInMemorySize="512" />
+</beans>

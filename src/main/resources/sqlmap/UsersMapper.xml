@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.auditing.work.dal.daointerface.UsersMapper">
+    <resultMap id="BaseResultMap" type="com.auditing.work.dal.dataobject.Users">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="role" property="role" jdbcType="INTEGER"/>
+        <result column="department_id" property="department_id" jdbcType="INTEGER"/>
+        <result column="departmentName" property="departmentName" jdbcType="VARCHAR"/>
+        <result column="feature" property="feature" jdbcType="VARCHAR"/>
+        <result column="gmt_create" property="gmtCreate" jdbcType="TIMESTAMP"/>
+        <result column="gmt_modified" property="gmtModified" jdbcType="TIMESTAMP"/>
+        <result column="is_delete" property="isDelete" jdbcType="SMALLINT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_name, password, role, department_id, feature, gmt_create, gmt_modified, is_delete
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from users
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAllUsers" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from users
+    </select>
+    <select id="selectUsersByDepartmentId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from users
+        WHERE department_id=#{department_id, jdbcType=INTEGER}
+    </select>
+    
+      <select id="selectLisByRoleAndDepName" resultMap="BaseResultMap" >
+        select
+			users.id,
+			users.user_name,
+			users.`password`,
+			users.feature,
+			users.gmt_create,
+			users.gmt_modified,
+			users.is_delete,
+			users.department_id,
+			users.role
+        from users
+        Left Join department on users.department_id = department.id
+        WHERE role=#{role, jdbcType=INTEGER} and department.name = #{depName,jdbcType=VARCHAR}
+        
+    </select>
+    
+    <select id="queryByUser" parameterType="com.auditing.work.dal.dataobject.Users"
+            resultMap="BaseResultMap">
+        select
+         	users.id,
+         	 users.user_name, 
+         	 users.password, 
+         	 users.role, 
+         	 users.department_id,
+         	 users.feature, 
+         	 users.gmt_create, 
+         	 users.gmt_modified,
+         	 users.is_delete,
+         	 department.name as departmentName 
+        from users
+        Left Join department on users.department_id = department.id
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="userName != null">
+                and user_name = #{userName,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from users
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.auditing.work.dal.dataobject.Users">
+    insert into users (id, user_name, password, 
+      role, department_id, feature,
+      gmt_create, gmt_modified, is_delete
+      )
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{role,jdbcType=INTEGER}, #{department_id,jdbcType=INTEGER}, #{feature,jdbcType=VARCHAR},
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=SMALLINT}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.auditing.work.dal.dataobject.Users">
+        insert into users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="role != null">
+                role,
+            </if>
+            <if test="department_id != null">
+                department_id,
+            </if>
+            <if test="feature != null">
+                feature,
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create,
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null">
+                #{role,jdbcType=INTEGER},
+            </if>
+            <if test="department_id != null">
+                #{department_id,jdbcType=INTEGER},
+            </if>
+            <if test="feature != null">
+                #{feature,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModified != null">
+                #{gmtModified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=SMALLINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.auditing.work.dal.dataobject.Users">
+        update users
+        <set>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null">
+                role = #{role,jdbcType=INTEGER},
+            </if>
+            <if test="department_id != null">
+                department_id = #{department_id,jdbcType=INTEGER},
+            </if>
+            <if test="feature != null">
+                feature = #{feature,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=SMALLINT},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar,jdbcType=BLOB},
+            </if>
+            <if test="avatarName != null">
+                avatarName = #{avatarName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.auditing.work.dal.dataobject.Users">
+    update users
+    set user_name = #{userName,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      role = #{role,jdbcType=INTEGER},
+      department_id = #{department_id,jdbcType=INTEGER},
+      feature = #{feature,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      is_delete = #{isDelete,jdbcType=SMALLINT},
+       avatar = #{avatar,jdbcType=BLOB},
+       avatarName = #{avatarName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+    <select id="selectUserByName" parameterType="string" resultMap="BaseResultMap">
+        select a.*,b.name as departmentName from users a left join department b on a.department_id = b.id where a.user_name = #{name}
+    </select>
+    
+</mapper>

@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auditing.work.dal.daointerface.ReviewPointMapper">
+    <resultMap id="ReviewPointMap" type="com.auditing.work.dal.dataobject.ReviewPoint">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="fourth_id" jdbcType="INTEGER" property="fourth_id"/>
+        <result column="detail" jdbcType="VARCHAR" property="detail"/>
+        <result column="score" jdbcType="CHAR" property="score"/>
+        <result column="passed" jdbcType="BOOLEAN" property="passed"/>
+         <result column="isEdit" jdbcType="BOOLEAN" property="isEdit"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="department_id" jdbcType="VARCHAR" property="department_id"/>
+        <result column="attachment" jdbcType="VARCHAR" property="attachment"/>
+        <result column="remarks" jdbcType="VARCHAR" property="remarks"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        
+         <result column="level1Name" jdbcType="VARCHAR" property="level1Name"/>
+          <result column="level2Name" jdbcType="VARCHAR" property="level2Name"/>
+           <result column="level3Name" jdbcType="VARCHAR" property="level3Name"/>
+            <result column="level4Name" jdbcType="VARCHAR" property="level4Name"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, fourth_id, detail, score, passed, status, department_id, attachment, remarks,title
+    </sql> 
+     <select id="queryByFourthId" resultMap="ReviewPointMap">
+        select  
+        	ReviewPoint.id,
+			ReviewPoint.fourth_id,
+			ReviewPoint.score,
+			ReviewPoint.passed,
+			ReviewPoint.`status`,
+			ReviewPoint.attachment,
+			ReviewPoint.remarks,
+			ReviewPoint.detail,
+			ReviewPoint.title,
+			ReviewPoint.department_id,
+			ReviewPoint.isEdit,
+			ReviewPoint.isManagerEdit
+        from ReviewPoint where ReviewPoint.fourth_id=#{fourth_id, jdbcType=INTEGER} 
+    </select>
+    
+    <select id="selectAllReviewPointByFourthId" resultMap="ReviewPointMap">
+        select * from ReviewPoint where fourth_id=#{fourth_id, jdbcType=INTEGER} 
+    </select>
+
+    <select id="selectByDepartmentAndFourth" resultMap="ReviewPointMap">
+        select * from ReviewPoint where department_id like CONCAT('%', #{department_id}, '%') 
+        and fourth_id=#{fourth_id, jdbcType=INTEGER}
+    </select>
+    
+   <select id="selectByDetailAndFourth" resultMap="ReviewPointMap">
+        select * from ReviewPoint where 
+        detail like CONCAT('%', #{detail}, '%') 
+        and fourth_id=#{fourth_id, jdbcType=INTEGER}
+    </select>
+    
+    <select id="selectReviewPointById" parameterType="java.lang.Integer" resultMap="ReviewPointMap">
+        select * from ReviewPoint where id=#{id, jdbcType=INTEGER}
+    </select>
+      <select id="select"  resultMap="ReviewPointMap">
+      			SELECT
+						ReviewPoint.id,
+						ReviewPoint.fourth_id,
+						ReviewPoint.score,
+						ReviewPoint.passed,
+						ReviewPoint.`status`,
+						ReviewPoint.attachment,
+						ReviewPoint.remarks,
+						ReviewPoint.detail,
+						ReviewPoint.title,
+						ReviewPoint.department_id,
+						ReviewPoint.isEdit,
+						ReviewPoint.isManagerEdit
+				FROM
+					   ReviewPoint
+				Left Join review_point_doc on ReviewPoint.id = review_point_doc.review_point_id
+				LEFT JOIN FourthCategory ON ReviewPoint.fourth_id=FourthCategory.id
+				LEFT JOIN ThirdCategory ON FourthCategory.third_id=ThirdCategory.id
+				LEFT JOIN SecondCategory ON ThirdCategory.second_id=SecondCategory.id
+				LEFT JOIN FirstCategory ON SecondCategory.first_id=FirstCategory.id
+          <where> 
+				    <if test="department_id != null  and department_id != '' ">
+				        AND ReviewPoint.department_id LIKE '%${department_id}%'
+				    </if> 
+				    <if test="status != null ">
+				      AND  ReviewPoint.status=#{status, jdbcType=INTEGER} 
+				    </if>
+				    <if test="fourth_id != null ">
+				      AND ReviewPoint.fourth_id=#{fourth_id, jdbcType=INTEGER} 
+				    </if>
+				     <if test="key != null  and key != '' ">
+				        AND (  
+				        	ReviewPoint.detail LIKE '%${key}%' 
+				        	OR FourthCategory.`name` LIKE '%${key}%' 
+				        	OR ThirdCategory.`name` LIKE '%${key}%' 
+				        	OR SecondCategory.`name` LIKE '%${key}%' 
+				        	OR FirstCategory.`name` LIKE '%${key}%' 
+				        	OR FourthCategory.`level` LIKE '%${key}%' 
+				        	OR ThirdCategory.`level` LIKE '%${key}%' 
+				        	OR SecondCategory.`level` LIKE '%${key}%' 
+				        	OR FirstCategory.`level` LIKE '%${key}%'
+				        	)
+				    </if> 
+				    <if test="docFileName != null  and docFileName != '' ">
+				        AND review_point_doc.doc_name LIKE '%${docFileName}%'
+				    </if> 
+		  </where>
+		  group by ReviewPoint.id 
+    </select>
+    
+    
+          <select id="selectPage"  resultMap="ReviewPointMap">
+      			SELECT
+						ReviewPoint.id,
+						ReviewPoint.fourth_id,
+						ReviewPoint.score,
+						ReviewPoint.passed,
+						ReviewPoint.`status`,
+						ReviewPoint.attachment,
+						ReviewPoint.remarks,
+						ReviewPoint.detail,
+						ReviewPoint.title,
+						ReviewPoint.department_id,
+						ReviewPoint.isEdit,
+						ReviewPoint.isManagerEdit,
+						FourthCategory.`name`as level4Name,
+						concat(ThirdCategory.`level`,ThirdCategory.`name`) as level3Name,
+						concat(SecondCategory.`level`,SecondCategory.`name`) as level2Name,
+						concat(FirstCategory.`level`,FirstCategory.`name`) as level1Name
+				FROM
+					   ReviewPoint
+				Left Join review_point_doc on ReviewPoint.id = review_point_doc.review_point_id
+				LEFT JOIN FourthCategory ON ReviewPoint.fourth_id=FourthCategory.id
+				LEFT JOIN ThirdCategory ON FourthCategory.third_id=ThirdCategory.id
+				LEFT JOIN SecondCategory ON ThirdCategory.second_id=SecondCategory.id
+				LEFT JOIN FirstCategory ON SecondCategory.first_id=FirstCategory.id
+          <where> 
+				    <if test="department_id != null  and department_id != '' ">
+				        AND ReviewPoint.department_id LIKE '%${department_id}%'
+				    </if> 
+				    <if test="status != null ">
+				      AND  ReviewPoint.status=#{status, jdbcType=INTEGER} 
+				    </if>
+				    <if test="fourth_id != null ">
+				      AND ReviewPoint.fourth_id=#{fourth_id, jdbcType=INTEGER} 
+				    </if>
+				     <if test="key != null  and key != '' ">
+				        AND ReviewPoint.detail LIKE '%${key}%'
+				    </if> 
+				    <if test="docFileName != null  and docFileName != '' ">
+				        AND review_point_doc.doc_name LIKE '%${docFileName}%'
+				    </if> 
+		  </where>
+		  group by ReviewPoint.id 
+		  LIMIT ${startRow},${size}
+    </select>
+    
+    
+    <select id="queryReviewPointById" parameterType="java.lang.Integer" resultMap="ReviewPointMap">
+             SELECT
+				ReviewPoint.fourth_id,
+				ReviewPoint.score,
+				ReviewPoint.passed,
+				ReviewPoint.`status`,
+				ReviewPoint.attachment,
+				ReviewPoint.remarks,
+				ReviewPoint.detail,
+				ReviewPoint.title,
+				ReviewPoint.department_id,
+				ReviewPoint.id,
+				ReviewPoint.isEdit,
+			 	FourthCategory.`name`as level4Name,
+				concat(ThirdCategory.`level`,ThirdCategory.`name`) as level3Name,
+				concat(SecondCategory.`level`,SecondCategory.`name`) as level2Name,
+				concat(FirstCategory.`level`,FirstCategory.`name`) as level1Name
+			from ReviewPoint
+				LEFT JOIN FourthCategory ON ReviewPoint.fourth_id=FourthCategory.id
+				LEFT JOIN ThirdCategory ON FourthCategory.third_id=ThirdCategory.id
+				LEFT JOIN SecondCategory ON ThirdCategory.second_id=SecondCategory.id
+				LEFT JOIN FirstCategory ON SecondCategory.first_id=FirstCategory.id
+		where ReviewPoint.id=#{id, jdbcType=INTEGER}
+    </select>
+    <select id="selectAllReviewPoint" resultMap="ReviewPointMap">
+        select * from ReviewPoint
+    </select>
+    <select id="countReviewPointByStatus" parameterType="map" resultType="java.lang.Integer">
+       			<!-- SELECT
+						count(ReviewPoint.id)
+				FROM
+					   ReviewPoint
+				LEFT JOIN FourthCategory ON ReviewPoint.fourth_id=FourthCategory.id
+          <where> 
+				    <if test="depName != null  and depName != '' ">
+				        AND ReviewPoint.department_id LIKE '%${depName}%'
+				    </if> 
+				    <if test="status != null ">
+				      AND   status=#{status, jdbcType=INTEGER}
+				    </if>
+				    <if test="userName != null and userName != '' ">
+				      AND  FourthCategory.user_name = #{userName} 
+				    </if>
+		  </where> -->
+		  
+		    SELECT
+				count(*)
+			FROM
+				ReviewPoint
+			<where>
+				<if test="userName != null and userName != '' ">
+				fourth_id IN (
+					SELECT
+						fourthid
+					FROM
+						fourthcat_dep_relation
+					WHERE
+						username LIKE #{userName}
+				)
+				</if>
+				<if test="depName != null  and depName != '' ">
+			        AND department_id LIKE '%${depName}%'
+			    </if>
+				<if test="status != null ">
+			    	AND status=#{status, jdbcType=INTEGER}
+			    </if>
+			</where>
+       
+    </select>
+    <insert id="insert" parameterType="com.auditing.work.dal.dataobject.ReviewPoint">
+        insert into ReviewPoint (id, fourth_id, detail, score, passed, status, department_id, attachment, remarks, title)
+        values (#{id,jdbcType=INTEGER}, #{fourth_id,jdbcType=INTEGER}, #{detail,jdbcType=VARCHAR}, #{score,jdbcType=CHAR},
+        #{passed,jdbcType=BOOLEAN}, #{status,jdbcType=INTEGER}, #{department_id,jdbcType=VARCHAR}, #{attachment,jdbcType=VARCHAR},
+        #{remarks,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR})
+    </insert>
+    <update id="updateReviewPoint" parameterType="com.auditing.work.dal.dataobject.ReviewPoint">
+        update ReviewPoint
+        <set>
+          <if test="score != null">
+            score = #{score,jdbcType=VARCHAR},
+          </if>
+          <if test="passed != null">
+              passed = #{passed,jdbcType=BOOLEAN},
+           </if>
+            <if test="status != null">
+            status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="attachment != null">
+            attachment = #{attachment,jdbcType=VARCHAR},
+            </if>
+            <if test="remarks != null">
+            remarks = #{remarks,jdbcType=VARCHAR},
+            </if>
+             <if test="department_id != null">
+           		 department_id = #{department_id,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+     <update id="setEdit" >
+        update ReviewPoint set ReviewPoint.isEdit = 1
+    </update>
+      <update id="setNotEdit" >
+        update ReviewPoint set ReviewPoint.isEdit = 0
+    </update>
+    
+    
+    <update id="setManagerEdit" >
+        update ReviewPoint set ReviewPoint.isManagerEdit = 1
+    </update>
+      <update id="setNotManagerEdit" >
+        update ReviewPoint set ReviewPoint.isManagerEdit = 0
+    </update>
+    
+    <update id="stautsReset" >
+        update ReviewPoint set ReviewPoint.status = 0,ReviewPoint.passed=0
+    </update>
+    
+    <!-- 清空附件 -->
+    <delete id="docReset" >
+         delete from review_point_doc 
+    </delete>
+    
+    <!-- 清空留言 -->
+    <delete id="commentReset" >
+         delete from review_point_comment 
+    </delete>
+    
+    <!-- 清空审核记录 -->
+    <delete id="actionlogReset" >
+         delete from review_point_action_log 
+    </delete>
+    <!-- 清空审核记录 -->
+    <delete id="messageReset" >
+         delete from review_point_message 
+    </delete>
+    
+   
+    
+   <delete id="deleteReviewPoint"  >
+        delete from ReviewPoint 
+    </delete>
+    
+       <delete id="deleteFourthCategory" >
+        delete from FourthCategory 
+    </delete>
+    
+       <delete id="deleteThirdCategory">
+        delete from ThirdCategory 
+    </delete>
+       <delete id="deleteSecondCategory"  >
+        delete from SecondCategory 
+    </delete>
+       <delete id="deleteFirstCategory"  >
+        delete from FirstCategory 
+    </delete>
+    
+    <!-- <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from auditing_detail
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="queryAuditingDetail" parameterType="com.auditing.work.dal.dataobject.AuditingDetail"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from auditing_detail
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="level != null">
+                and level = #{level,jdbcType=VARCHAR}
+            </if>
+            <if test="standards != null">
+                and standards = #{standards,jdbcType=VARCHAR}
+            </if>
+            <if test="detail != null">
+                and detail = #{detail,jdbcType=VARCHAR}
+            </if>
+            <if test="department != null">
+                and department = #{department,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null">
+                and type = #{type,jdbcType=VARCHAR}
+            </if>
+            <if test="result != null">
+                and result = #{result,jdbcType=VARCHAR}
+            </if>
+            <if test="feature != null">
+                and feature =#{freature,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryDetailLikely" parameterType="com.auditing.work.dal.dataobject.AuditingDetail"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from auditing_detail
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="level != null">
+                and level LIKE #{level,jdbcType=VARCHAR}
+            </if>
+            <if test="standards != null">
+                and standards like #{standards,jdbcType=VARCHAR}
+            </if>
+            <if test="detail != null">
+                and detail LIKE #{detail,jdbcType=VARCHAR}
+            </if>
+            <if test="department != null">
+                and department = #{department,jdbcType=VARCHAR}
+            </if>
+            <if test="result != null">
+                and result = #{result,jdbcType=VARCHAR}
+            </if>
+            <if test="feature != null">
+                and feature =#{freature,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from auditing_detail
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+        insert into auditing_detail (id, level, standards,
+        detail, department, title,
+        type, result, feature,
+        gmt_create, gmt_modified, is_delete
+        )
+        values (#{id,jdbcType=BIGINT}, #{level,jdbcType=VARCHAR}, #{standards,jdbcType=VARCHAR},
+        #{detail,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},
+        #{type,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{feature,jdbcType=VARCHAR},
+        #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=SMALLINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+        insert into auditing_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="standards != null">
+                standards,
+            </if>
+            <if test="detail != null">
+                detail,
+            </if>
+            <if test="department != null">
+                department,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="result != null">
+                result,
+            </if>
+            <if test="feature != null">
+                feature,
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create,
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="standards != null">
+                #{standards,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="department != null">
+                #{department,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="result != null">
+                #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="feature != null">
+                #{feature,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModified != null">
+                #{gmtModified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=SMALLINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+        update auditing_detail
+        <set>
+            <if test="level != null">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="standards != null">
+                standards = #{standards,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="department != null">
+                department = #{department,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="result != null">
+                result = #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="feature != null">
+                feature = #{feature,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=SMALLINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+        update auditing_detail
+        set level = #{level,jdbcType=VARCHAR},
+        standards = #{standards,jdbcType=VARCHAR},
+        detail = #{detail,jdbcType=VARCHAR},
+        department = #{department,jdbcType=VARCHAR},
+        title = #{title,jdbcType=VARCHAR},
+        type = #{type,jdbcType=VARCHAR},
+        result = #{result,jdbcType=VARCHAR},
+        feature = #{feature,jdbcType=VARCHAR},
+        gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+        gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+        is_delete = #{isDelete,jdbcType=SMALLINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update> -->
+</mapper>

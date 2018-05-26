@@ -1,0 +1,27 @@
+<configuration debug="true">
+    <property resource="config.properties"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">   
+	    <!-- encoder 默认配置为PatternLayoutEncoder -->   
+	    <encoder>   
+	      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>   
+	    </encoder>   
+	  </appender>   
+	   
+	  <!-- logback为java中的包 -->   
+	  <logger name="logback"/> 
+	  
+	  <logger name="jdbc.connection" level="OFF" />
+    <logger name="jdbc.audit" level="OFF" />
+    <logger name="jdbc.resultset" level="OFF" />
+    <logger name="jdbc.sqlonly" level="OFF" />
+    <logger name="jdbc.sqltiming" level="INFO" />
+	   
+	  <root level="INFO">             
+	    <appender-ref ref="STDOUT" />   
+	  </root>
+    
+    
+    
+
+</configuration>

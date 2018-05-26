@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.auditing.work.dal.daointerface.AuditingDetailMapper">
+    <resultMap id="BaseResultMap" type="com.auditing.work.dal.dataobject.AuditingDetail">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="level" jdbcType="VARCHAR" property="level"/>
+        <result column="standards" jdbcType="VARCHAR" property="standards"/>
+        <result column="detail" jdbcType="VARCHAR" property="detail"/>
+        <result column="department" jdbcType="VARCHAR" property="department"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="result" jdbcType="VARCHAR" property="result"/>
+        <result column="feature" jdbcType="VARCHAR" property="feature"/>
+        <result column="gmt_create" jdbcType="TIMESTAMP" property="gmtCreate"/>
+        <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified"/>
+        <result column="is_delete" jdbcType="SMALLINT" property="isDelete"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    id, level, standards, detail, department, title, type, result, feature, gmt_create, 
+    gmt_modified, is_delete
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from auditing_detail
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="queryAuditingDetail" parameterType="com.auditing.work.dal.dataobject.AuditingDetail"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from auditing_detail
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="level != null">
+                and level = #{level,jdbcType=VARCHAR}
+            </if>
+            <if test="standards != null">
+                and standards = #{standards,jdbcType=VARCHAR}
+            </if>
+            <if test="detail != null">
+                and detail = #{detail,jdbcType=VARCHAR}
+            </if>
+            <if test="department != null">
+                and department = #{department,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null">
+                and type = #{type,jdbcType=VARCHAR}
+            </if>
+            <if test="result != null">
+                and result = #{result,jdbcType=VARCHAR}
+            </if>
+            <if test="feature != null">
+                and feature =#{freature,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </select>
+
+    <select id="queryDetailLikely" parameterType="com.auditing.work.dal.dataobject.AuditingDetail"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from auditing_detail
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="level != null">
+                and level LIKE #{level,jdbcType=VARCHAR}
+            </if>
+            <if test="standards != null">
+                and standards like #{standards,jdbcType=VARCHAR}
+            </if>
+            <if test="detail != null">
+                and detail LIKE #{detail,jdbcType=VARCHAR}
+            </if>
+            <if test="department != null">
+                and department = #{department,jdbcType=VARCHAR}
+            </if>
+            <if test="result != null">
+                and result = #{result,jdbcType=VARCHAR}
+            </if>
+            <if test="feature != null">
+                and feature =#{freature,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from auditing_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+    insert into auditing_detail (id, level, standards, 
+      detail, department, title, 
+      type, result, feature, 
+      gmt_create, gmt_modified, is_delete
+      )
+    values (#{id,jdbcType=BIGINT}, #{level,jdbcType=VARCHAR}, #{standards,jdbcType=VARCHAR}, 
+      #{detail,jdbcType=VARCHAR}, #{department,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{result,jdbcType=VARCHAR}, #{feature,jdbcType=VARCHAR}, 
+      #{gmtCreate,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=SMALLINT}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+        insert into auditing_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="standards != null">
+                standards,
+            </if>
+            <if test="detail != null">
+                detail,
+            </if>
+            <if test="department != null">
+                department,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="result != null">
+                result,
+            </if>
+            <if test="feature != null">
+                feature,
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create,
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified,
+            </if>
+            <if test="isDelete != null">
+                is_delete,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="standards != null">
+                #{standards,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="department != null">
+                #{department,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="result != null">
+                #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="feature != null">
+                #{feature,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModified != null">
+                #{gmtModified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                #{isDelete,jdbcType=SMALLINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+        update auditing_detail
+        <set>
+            <if test="level != null">
+                level = #{level,jdbcType=VARCHAR},
+            </if>
+            <if test="standards != null">
+                standards = #{standards,jdbcType=VARCHAR},
+            </if>
+            <if test="detail != null">
+                detail = #{detail,jdbcType=VARCHAR},
+            </if>
+            <if test="department != null">
+                department = #{department,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="result != null">
+                result = #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="feature != null">
+                feature = #{feature,jdbcType=VARCHAR},
+            </if>
+            <if test="gmtCreate != null">
+                gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="gmtModified != null">
+                gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDelete != null">
+                is_delete = #{isDelete,jdbcType=SMALLINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.auditing.work.dal.dataobject.AuditingDetail">
+    update auditing_detail
+    set level = #{level,jdbcType=VARCHAR},
+      standards = #{standards,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR},
+      department = #{department,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      result = #{result,jdbcType=VARCHAR},
+      feature = #{feature,jdbcType=VARCHAR},
+      gmt_create = #{gmtCreate,jdbcType=TIMESTAMP},
+      gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
+      is_delete = #{isDelete,jdbcType=SMALLINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
